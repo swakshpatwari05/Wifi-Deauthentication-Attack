@@ -1,0 +1,102 @@
+Project Documentation: Wifi Deauthentication Attack
+
+Project Topic: Wifi Deauthentication Attack
+Session: Spring 2024
+Instructor: Professor Sumit Kalra
+
+Group Members:
+
+Aansh Chandrakant Dubey (B22AI058)
+Swaksh Patwari (B22AI065)
+Task 1: Deauthentication attack and WPA2 password hack
+
+Problem Statement:
+Disrupt the connection between a target device (with a given MAC or IP address) and a router without physical access to either device. This attack aims to force the target device to disconnect from the network temporarily.
+
+Requirements:
+
+2 clients, one to launch an attack and to be the victim.
+Attacker must have a wireless adapter.
+Procedure:
+
+Identify the Wireless Card:
+Open a terminal and run the command iwconfig to see the list of network interfaces.
+Note the name of your wireless card (e.g., wlo1).
+Put Your Wireless Card into Monitor Mode:
+Run the command airmon-ng start wlo1 to put your wireless card into monitor mode, allowing it to monitor all traffic on the network.
+Kill interfering processes using sudo airmon-ng check kill.
+Identify Target Router and Device:
+Identify the BSSID (MAC address) and channel of the router to which the target device is connected.
+Run the command airodump-ng wlo1 --bssid [router's BSSID] --channel [router's channel] to capture information about devices connected to the router.
+Deauthenticate Clients:
+Use sudo aireplay-ng -0 0 -a [BSSID] wlo1 command to deauthenticate clients from the target network. This step forces clients to reconnect and triggers the capture of the handshake.
+Capture Handshake:
+Use sudo airodump-ng -w hack1 --bssid [BSSID] -c [channel] wlo1 command to capture the four-way handshake from the target network.
+View Captured Handshake:
+Open the captured file (e.g., hack1-01.cap) in Wireshark to view the captured handshake.
+Filter by EAPOL packets.
+Observations:
+
+Not all users were found by aircrack-ng.
+Once disconnected, the user does not show up on aircrack-ng.
+The identity of the attacker can be detected by the victim using Wireshark or any other packet capturing tool by matching MAC address to the IP address using network ARP packets.
+Task 2: Increase the number of potential victims for the attack
+
+Problem Statement:
+To find all the users connected to a particular router of IITJ_WLAN network.
+
+Procedure:
+
+Get closer to the router.
+Observations:
+
+The number of routers in range increased, but the number of potential victims remains the same.
+Change the band using -band parameter.
+Task 3: A stealthier way to hack WPA2 passwords – PMKID Attack
+
+Explanation:
+
+PSK (Pre-Shared Key): A secret key shared between client devices and the access point.
+PMK (Pairwise Master Key): Derived key used in WPA2-PSK networks for secure communication.
+PMKID (Pairwise Master Key Identifier): Unique identifier associated with the PMK.
+Execution Requirements:
+
+Kali Linux machine
+Alpha Wi-Fi adapter or equivalent
+Wi-Fi access point broadcasting WPA2 and PMK IDs
+Key dependencies for hcx tools
+Attack Steps:
+
+Setting the Adapter to Monitor Mode:
+Utilize airmon-ng to initiate monitor mode on the Wi-Fi adapter.
+Capturing:
+Use hcxpcaptool to capture Wi-Fi signals and store them.
+Converting and Cracking:
+Convert the captured data file into a text format.
+Employ hashcat to decipher password hashes using predefined wordlists or custom attack strategies.
+Mitigation:
+
+Use complex and unpredictable passwords.
+Consider disabling the broadcast of PMK IDs on routers.
+Task 4: Deep dive into the library aircrack-ng
+
+Overview:
+Aircrack-ng is a suite of tools used for assessing and testing the security of wireless networks. It includes tools like airmon-ng, aireplay-ng, airodump-ng, etc.
+
+airodump-ng Output Analysis:
+
+CH: Channel number
+BSSID: MAC address of the access point
+PWR: Signal strength
+Beacons: Number of beacon frames
+#Data: Number of data frames
+ESSID: Name of the wireless network
+Functions from aircrack-ng:
+
+airmon-ng:
+Used for enabling and disabling monitor mode on wireless interfaces.
+aireplay-ng:
+Injects and replays wireless frames for testing.
+airodump-ng:
+Captures and analyzes wireless packets for network monitoring and security testing.
+This documentation provides a comprehensive overview of the Wifi Deauthentication Attack project, including its objectives, procedures, observations, and tools used. It serves as a guide for understanding the project's scope and implementation.
